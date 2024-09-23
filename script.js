@@ -79,7 +79,7 @@ const imageData = [
     { src: 'Yaoyao.png', category: 'kusa' },
     { src: 'Raiden.png', category: 'kaminari' },
     { src: 'Wriothesley.png', category: 'koori' },
-    { src: 'lisa.png', category: 'kaminari' },
+    { src: 'Lisa.png', category: 'kaminari' },
     { src: 'Lyney.png', category: 'hi' },
     { src: 'Lynette.png', category: 'kaze' },
     { src: 'Layla.png', category: 'koori' },
@@ -90,11 +90,28 @@ const imageData = [
     { src: 'Chasca.png', category: 'kaze' },
     { src: 'Kachina.png', category: 'iwa' }
 ];
-const MAX_SELECTION = 3;
+
 const SELECTED_LABEL = '☑';
 
 // タブごとの選択状態を管理するためのオブジェクト
 const tabSelections = {};
+
+// タブの選択状態を表示
+function updateTabSelectionsDisplay() {
+    const tabSelectionsElement = document.getElementById('tab-selections');
+    tabSelectionsElement.innerHTML = ''; // クリアしてから再描画
+
+    // tabSelectionsが空でも問題ないように対策
+    if (tabSelections && Object.keys(tabSelections).length > 0) {
+        for (const [category, selections] of Object.entries(tabSelections)) {
+            const categoryInfo = document.createElement('div');
+            categoryInfo.textContent = `${category}: ${selections.join(', ')}`;
+            tabSelectionsElement.appendChild(categoryInfo);
+        }
+    } else {
+        tabSelectionsElement.textContent = 'No selections made yet.';
+    }
+}
 
 function loadImages() {
     const tabs = document.querySelectorAll('.tab-label');
@@ -146,85 +163,64 @@ function loadImages() {
         });
     }
 
-//function handleImageClick(img, category) {
-//    const src = img.dataset.src;
-//    const gridContainer = document.getElementById('grid');
-//
-//    // 選択解除時
-//    if (img.classList.contains('selected')) {
-//        img.classList.remove('selected');
-//        const existingEntry = gridContainer.querySelector(`img[data-src="${src}"]`);
-//        if (existingEntry) {
-//            existingEntry.parentElement.remove(); // 既存のセットを削除
-//        }
-//    } else {
-//        img.classList.add('selected');
-//
-//        // 新しいセットを作成
-//        const entry = document.createElement('div');
-//        entry.className = 'entry'; // CSSクラスを適用
-//        
-//        const imgElement = document.createElement('img');
-//        imgElement.src = `${imageFolder}${src}`;
-//        imgElement.alt = src;
-//        imgElement.dataset.src = src;
-//
-//        const nameInput = document.createElement('input');
-//        nameInput.type = 'text';
-//
-//        const descriptionInput = document.createElement('textarea');
-//        
-//        entry.appendChild(imgElement);
-//        entry.appendChild(nameInput);
-//        entry.appendChild(descriptionInput);
-//        
-//        gridContainer.appendChild(entry);
-//    }
-//}
+function handleImageClick(img, category) {
+    const src = img.dataset.src;
+    const gridContainer = document.getElementById('grid');
+    const tabCategory = document.querySelector('.tab-label.active').dataset.category;
+    
+    // 選択状態を取得
+    let selectedCategory = tabSelections[tabCategory] || [];
 
-    function handleImageClick(img, category) {
-        const src = img.dataset.src;
-        const gridContainer = document.getElementById('grid');
-        const isSelected = img.classList.contains('selected');
-        const tabCategory = document.querySelector('.tab-label.active').dataset.category;
+    // 選択済みかどうかを判定
+    const isSelected = selectedCategory.includes(src);
 
-        // 現在のタブの選択状態を取得
-        let selectedCategory = tabSelections[tabCategory] || [];
+    // 選択解除時
+    if (isSelected) {
+        img.classList.remove('selected');
+        removeNumberingAndBorder(img.parentElement);  // コンテナから番号と枠を削除
 
-        // 選択解除時
-        if (img.classList.contains('selected')) {
-            img.classList.remove('selected');
-            removeNumberingAndBorder(img.parentElement);  // コンテナから番号と枠を削除
-            
-            const existingEntry = gridContainer.querySelector(`img[data-src="${src}"]`);
-            if (existingEntry) {
-                existingEntry.parentElement.remove(); // 既存のセットを削除
-            }
-        } else {
-            img.classList.add('selected');
-            addNumberingAndBorder(img.parentElement, selectedCategory.length + 1);  // コンテナに番号と枠を追加
-            
-            // 新しいセットを作成
-            const entry = document.createElement('div');
-            entry.className = 'entry'; // CSSクラスを適用
-            
-            const imgElement = document.createElement('img');
-            imgElement.src = `${imageFolder}${src}`;
-            imgElement.alt = src;
-            imgElement.dataset.src = src;
-
-            const nameInput = document.createElement('input');
-            nameInput.type = 'text';
-
-            const descriptionInput = document.createElement('textarea');
-            
-            entry.appendChild(imgElement);
-            entry.appendChild(nameInput);
-            entry.appendChild(descriptionInput);
-            
-            gridContainer.appendChild(entry);
+        const existingEntry = gridContainer.querySelector(`img[data-src="${src}"]`);
+        if (existingEntry) {
+            existingEntry.parentElement.remove(); // 既存のセットを削除
         }
+
+        // 選択リストから画像を削除
+        selectedCategory = selectedCategory.filter(item => item !== src);
+    } else {
+        // 選択時
+        img.classList.add('selected');
+        selectedCategory.push(src);  // 選択リストに画像を追加
+        addNumberingAndBorder(img.parentElement, selectedCategory.length);  // コンテナに番号と枠を追加
+
+        // 新しいセットを作成
+        const entry = document.createElement('div');
+        entry.className = 'entry'; // CSSクラスを適用
+
+        const imgElement = document.createElement('img');
+        imgElement.src = `${imageFolder}${src}`;
+        imgElement.alt = src;
+        imgElement.dataset.src = src;
+
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+
+        const descriptionInput = document.createElement('textarea');
+
+        entry.appendChild(imgElement);
+        entry.appendChild(nameInput);
+        entry.appendChild(descriptionInput);
+
+        gridContainer.appendChild(entry);
     }
+
+    // 更新された選択リストをtabSelectionsに保存
+    tabSelections[tabCategory] = selectedCategory;
+
+    // 表示を更新
+    updateTabSelectionsDisplay();
+    updateImageNumbers(tabCategory);  // 番号の更新も行う
+}
+
 
     function updateTabState(tabCategory) {
         // 既存の選択リストを取得
@@ -244,6 +240,8 @@ function loadImages() {
                 addNumberingAndBorder(img.parentElement, index + 1);  // 画像に番号と枠を付ける
             }
         });
+        tabSelections[tabCategory] = selectedCategory; // 選択状態を更新
+        updateTabSelectionsDisplay();
     }
     
     function addNumberingAndBorder(container, number) {
@@ -266,83 +264,19 @@ function loadImages() {
     }
 
     function updateImageNumbers(tabCategory) {
-        const columnMapping = {
-            'hi': [0, 7, 14],
-            'mizu': [1, 8, 15],
-            'koori': [2, 9, 16],
-            'kaminari': [3, 10, 17],
-            'kusa': [4, 11, 18],
-            'kaze': [5, 12, 19],
-            'iwa': [6, 13, 20]
-        };
 
         const selectedCategory = tabSelections[tabCategory] || [];
-        const positions = columnMapping[tabCategory] || [];
 
         selectedCategory.forEach((src, index) => {
             const imgContainer = document.querySelector(`.image-item[data-src="${src}"]`).parentElement;
             addNumberingAndBorder(imgContainer, index + 1);
         });
-    }
-
-    function repositionImages(tabCategory) {
-        const columnMapping = {
-            'hi': [0, 7, 14],
-            'mizu': [1, 8, 15],
-            'koori': [2, 9, 16],
-            'kaminari': [3, 10, 17],
-            'kusa': [4, 11, 18],
-            'kaze': [5, 12, 19],
-            'iwa': [6, 13, 20]
-        };
-
-        const selectedCategory = tabSelections[tabCategory] || [];
-        const positions = columnMapping[tabCategory] || [];
-
-        // 上部の該当するタブの画像だけをクリア
-        positions.forEach(position => {
-            cells[position].innerHTML = '';
-        });
-
-        // 現在の選択画像で再配置
-        selectedCategory.forEach((src, index) => {
-            const img = document.createElement('img');
-            img.src = `${imageFolder}${src}`;
-            img.classList.add('selected');
-            const cellIndex = positions[index];
-            if (cellIndex !== undefined) {
-                console.log(`Placing image ${src} at position ${cellIndex}`);
-                cells[cellIndex].appendChild(img);
-            }
-        });
-
-        // ラベルの更新
-        updateImageNumbers(tabCategory);
+        tabSelections[tabCategory] = selectedCategory; // 選択状態を更新
+        updateTabSelectionsDisplay();
     }
 
     function restoreSelectionState(category) {
         const selectedCategory = tabSelections[category] || [];
-        const columnMapping = {
-            'hi': [0, 7, 14],
-            'mizu': [1, 8, 15],
-            'koori': [2, 9, 16],
-            'kaminari': [3, 10, 17],
-            'kusa': [4, 11, 18],
-            'kaze': [5, 12, 19],
-            'iwa': [6, 13, 20]
-        };
-        const positions = columnMapping[category] || [];
-
-        // 他のタブをクリアせずに、選択状態を復元
-        selectedCategory.forEach((src, index) => {
-            const img = document.createElement('img');
-            img.src = `${imageFolder}${src}`;
-            img.classList.add('selected');
-            const cellIndex = positions[index];
-            if (cellIndex !== undefined) {
-                cells[cellIndex].appendChild(img);
-            }
-        });
 
         // 青枠と☑の復元
         const imageContainers = document.querySelectorAll(`.tab-content .image-container .image-item[data-category="${category}"]`);
@@ -354,10 +288,12 @@ function loadImages() {
             }
         });
 
+        tabSelections[tabCategory] = selectedCategory; // 選択状態を更新
+        updateTabSelectionsDisplay();
         // ラベルの更新
         updateImageNumbers(category);
     }
-
+    
     // 保存ボタンのクリックイベントを追加
     const saveButton = document.getElementById('save-button');
     if (saveButton) {
@@ -369,9 +305,19 @@ function loadImages() {
 }
 
 function saveImage() {
-    html2canvas(document.getElementById('savearea'), { 
+    const saveArea = document.getElementById('savearea');
+    
+    // 要素全体の高さを取得（スクロールを含む）
+    const originalHeight = saveArea.scrollHeight;
+    const originalOverflow = saveArea.style.overflow;
+
+    // 一時的にスクロールを解除して要素を全て表示
+    saveArea.style.height = `${originalHeight}px`;
+    saveArea.style.overflow = 'visible'; // スクロールバーを消す
+
+    html2canvas(saveArea, { 
         useCORS: true, 
-        scale: 2 // スケールを調整して解像度を上げる
+        scale: 2 // 解像度を上げる
     }).then(canvas => {
         canvas.toBlob(function(blob) {
             const link = document.createElement('a');
@@ -380,7 +326,7 @@ function saveImage() {
             // 現在の日時を「yyyyMMdd_HHmmss」形式にフォーマット
             const now = new Date();
             const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0'); // 月は0から始まるので+1
+            const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -393,6 +339,10 @@ function saveImage() {
         }, 'image/png');
     }).catch(error => {
         console.error('Error capturing image:', error);
+    }).finally(() => {
+        // 元の高さとスクロール設定に戻す
+        saveArea.style.height = '';
+        saveArea.style.overflow = originalOverflow;
     });
 }
 
