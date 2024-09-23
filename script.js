@@ -288,7 +288,7 @@ function handleImageClick(img, category) {
             }
         });
 
-        tabSelections[tabCategory] = selectedCategory; // 選択状態を更新
+        //tabSelections[tabCategory] = selectedCategory; // 選択状態を更新
         //updateTabSelectionsDisplay();
         
         // ラベルの更新
@@ -307,63 +307,15 @@ function handleImageClick(img, category) {
 
 function saveImage() {
     const saveArea = document.getElementById('savearea');
-
-    // 元のスタイルを保存
-    const originalHeight = saveArea.style.height;
-    const originalOverflow = saveArea.style.overflow;
-
-    // 一時的にスタイルを変更して全体をキャプチャ可能にする
-    saveArea.style.height = 'auto';
-    saveArea.style.overflow = 'visible';
-
-    html2canvas(saveArea, { 
-        useCORS: true, 
-        scale: 2 
-    }).then(canvas => {
-        canvas.toBlob(function(blob) {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            const formattedDate = `${year}${month}${day}_${hours}${minutes}${seconds}`;
-            link.download = `ミリしら原神_${formattedDate}.png`; 
-            
-            link.click();
-        }, 'image/png');
-    }).catch(error => {
-        console.error('Error capturing image:', error);
-    }).finally(() => {
-        // 元のスタイルに戻す
-        saveArea.style.height = originalHeight;
-        saveArea.style.overflow = originalOverflow;
-    });
-}
-
-function saveImage() {
-    const saveArea = document.getElementById('savearea');
     const textareas = document.querySelectorAll('textarea');
-
-    // 一時的なdivを作成
-    const tempContainer = document.createElement('div');
-    tempContainer.style.display = 'none'; // 非表示にする
 
     // テキストエリアの内容を新しいdivにコピー
     textareas.forEach(textarea => {
         const textContainer = document.createElement('div');
         textContainer.style.whiteSpace = 'pre-wrap'; // 改行を反映
         textContainer.textContent = textarea.value; // テキストエリアの内容をコピー
-        tempContainer.appendChild(textContainer);
+        saveArea.appendChild(textContainer);
     });
-
-    // 一時的なdivをsaveAreaに追加
-    saveArea.appendChild(tempContainer);
 
     // html2canvasでキャプチャ
     html2canvas(saveArea, {
@@ -373,28 +325,22 @@ function saveImage() {
         canvas.toBlob(function(blob) {
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-
             const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            const formattedDate = `${year}${month}${day}_${hours}${minutes}${seconds}`;
-            link.download = `ミリしら原神_${formattedDate}.png`;
-
+            const formattedDate = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            link.download = `ミリしら原神_${formattedDate}.png`; 
             link.click();
         }, 'image/png');
     }).catch(error => {
         console.error('Error capturing image:', error);
     }).finally(() => {
-        // 一時的なdivを削除
-        saveArea.removeChild(tempContainer);
+        // コピーしたdivを削除
+        saveArea.innerHTML = ''; // saveareaを初期化
+        textareas.forEach(textarea => {
+            const textContainer = saveArea.querySelector('div');
+            if (textContainer) textContainer.remove();
+        });
     });
 }
-
 
 
 document.addEventListener('DOMContentLoaded', () => {
