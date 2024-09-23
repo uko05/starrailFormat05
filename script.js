@@ -217,7 +217,7 @@ function handleImageClick(img, category) {
     tabSelections[tabCategory] = selectedCategory;
 
     // 表示を更新
-    updateTabSelectionsDisplay();
+    //updateTabSelectionsDisplay();
     updateImageNumbers(tabCategory);  // 番号の更新も行う
 }
 
@@ -241,7 +241,7 @@ function handleImageClick(img, category) {
             }
         });
         tabSelections[tabCategory] = selectedCategory; // 選択状態を更新
-        updateTabSelectionsDisplay();
+        //updateTabSelectionsDisplay();
     }
     
     function addNumberingAndBorder(container, number) {
@@ -272,7 +272,7 @@ function handleImageClick(img, category) {
             addNumberingAndBorder(imgContainer, index + 1);
         });
         tabSelections[tabCategory] = selectedCategory; // 選択状態を更新
-        updateTabSelectionsDisplay();
+        //updateTabSelectionsDisplay();
     }
 
     function restoreSelectionState(category) {
@@ -289,7 +289,8 @@ function handleImageClick(img, category) {
         });
 
         tabSelections[tabCategory] = selectedCategory; // 選択状態を更新
-        updateTabSelectionsDisplay();
+        //updateTabSelectionsDisplay();
+        
         // ラベルの更新
         updateImageNumbers(category);
     }
