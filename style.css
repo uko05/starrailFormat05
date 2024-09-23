@@ -71,6 +71,7 @@ h1 {
     box-sizing: border-box; /* ボックスサイズを含める */
     margin-top: 1px; /* 上部のマージンを追加 */
     text-align: center; /* 中央揃え */
+    height: 25px; /* 高さを指定 */
 }
 
 .entry textarea {
@@ -80,6 +81,11 @@ h1 {
     box-sizing: border-box; /* ボックスサイズを含める */
     margin-top: 1px; /* 上部のマージンを追加 */
     resize: none; /* サイズ変更を無効にする */
+}
+
+textarea {
+    white-space: pre-wrap; /* 改行を保持する */
+    word-wrap: break-word; /* 長い単語は次の行に折り返す */
 }
 
 /* 小サイズ */

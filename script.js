@@ -307,23 +307,22 @@ function handleImageClick(img, category) {
 function saveImage() {
     const saveArea = document.getElementById('savearea');
     
-    // 要素全体の高さを取得（スクロールを含む）
-    const originalHeight = saveArea.scrollHeight;
-    const originalOverflow = saveArea.style.overflow;
-
-    // 一時的にスクロールを解除して要素を全て表示
-    saveArea.style.height = `${originalHeight}px`;
-    saveArea.style.overflow = 'visible'; // スクロールバーを消す
+    // テキストエリアと入力欄のスタイルを調整
+    const textAreas = saveArea.querySelectorAll('textarea, input[type="text"]');
+    textAreas.forEach(area => {
+        area.style.lineHeight = '1.5';  // 行の高さを調整
+        area.style.padding = '4px';     // 余白を調整
+        area.style.whiteSpace = 'pre-wrap'; // 改行を保持
+    });
 
     html2canvas(saveArea, { 
         useCORS: true, 
-        scale: 2 // 解像度を上げる
+        scale: 2 
     }).then(canvas => {
         canvas.toBlob(function(blob) {
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             
-            // 現在の日時を「yyyyMMdd_HHmmss」形式にフォーマット
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -333,18 +332,22 @@ function saveImage() {
             const seconds = String(now.getSeconds()).padStart(2, '0');
 
             const formattedDate = `${year}${month}${day}_${hours}${minutes}${seconds}`;
-            link.download = `ミリしら原神_${formattedDate}.png`; // ファイル名の変更
+            link.download = `ミリしら原神_${formattedDate}.png`; 
             
             link.click();
         }, 'image/png');
     }).catch(error => {
         console.error('Error capturing image:', error);
     }).finally(() => {
-        // 元の高さとスクロール設定に戻す
-        saveArea.style.height = '';
-        saveArea.style.overflow = originalOverflow;
+        // 元のスタイルに戻す
+        textAreas.forEach(area => {
+            area.style.lineHeight = '';  
+            area.style.padding = '';    
+            area.style.whiteSpace = ''; 
+        });
     });
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadImages();
