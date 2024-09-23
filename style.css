@@ -91,6 +91,7 @@ input, textarea {
 
 input {
     text-align: center;
+    vertical-align: top;
 }
 
 /* 小サイズ */
