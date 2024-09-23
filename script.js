@@ -306,7 +306,7 @@ function handleImageClick(img, category) {
 
 function saveImage() {
     const saveArea = document.getElementById('savearea');
-    
+
     // 元のスタイルを保存
     const originalHeight = saveArea.style.height;
     const originalOverflow = saveArea.style.overflow;
@@ -319,19 +319,46 @@ function saveImage() {
         useCORS: true, 
         scale: 2 
     }).then(canvas => {
+        const ctx = canvas.getContext('2d');
+
+        const entries = document.querySelectorAll('.entry');
+        entries.forEach((entry, index) => {
+            const nameInput = entry.querySelector('input[type="text"]');
+            const descriptionTextarea = entry.querySelector('textarea');
+
+            const name = nameInput.value;
+            const description = descriptionTextarea.value; // 改行をそのまま使用
+
+            // 名前を描画
+            ctx.fillText(name, 10, 30 + index * 100); // 適切な位置に描画
+
+            // 自動折り返しのための処理
+            const words = description.split(' ');
+            let line = '';
+            let y = 50 + index * 100; // 適切な位置
+
+            words.forEach((word) => {
+                const testLine = line + word + ' ';
+                const metrics = ctx.measureText(testLine);
+                const testWidth = metrics.width;
+
+                if (testWidth > saveArea.width) { // saveAreaの幅に応じて調整
+                    ctx.fillText(line, 10, y); // 現在の行を描画
+                    line = word + ' '; // 新しい行に移行
+                    y += 20; // 次の行の位置を調整
+                } else {
+                    line = testLine; // 現在の行を更新
+                }
+            });
+            ctx.fillText(line, 10, y); // 残りの行を描画
+        });
+
         canvas.toBlob(function(blob) {
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             
             const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            const formattedDate = `${year}${month}${day}_${hours}${minutes}${seconds}`;
+            const formattedDate = formatDate(now);
             link.download = `ミリしら原神_${formattedDate}.png`; 
             
             link.click();
