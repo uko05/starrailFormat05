@@ -348,29 +348,52 @@ function saveImage() {
 function saveImage() {
     const saveArea = document.getElementById('savearea');
     const textareas = document.querySelectorAll('textarea');
-    const originalContent = saveArea.innerHTML; // 元の内容を保存
+
+    // 一時的なdivを作成
+    const tempContainer = document.createElement('div');
+    tempContainer.style.display = 'none'; // 非表示にする
 
     // テキストエリアの内容を新しいdivにコピー
     textareas.forEach(textarea => {
         const textContainer = document.createElement('div');
         textContainer.style.whiteSpace = 'pre-wrap'; // 改行を反映
         textContainer.textContent = textarea.value; // テキストエリアの内容をコピー
-        saveArea.appendChild(textContainer);
+        tempContainer.appendChild(textContainer);
     });
+
+    // 一時的なdivをsaveAreaに追加
+    saveArea.appendChild(tempContainer);
 
     // html2canvasでキャプチャ
     html2canvas(saveArea, {
         useCORS: true,
         scale: 2
     }).then(canvas => {
-        // 画像保存処理...
+        canvas.toBlob(function(blob) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            const formattedDate = `${year}${month}${day}_${hours}${minutes}${seconds}`;
+            link.download = `ミリしら原神_${formattedDate}.png`;
+
+            link.click();
+        }, 'image/png');
     }).catch(error => {
         console.error('Error capturing image:', error);
     }).finally(() => {
-        // 元の内容に戻す
-        saveArea.innerHTML = originalContent; // 元の内容に戻す
+        // 一時的なdivを削除
+        saveArea.removeChild(tempContainer);
     });
 }
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
