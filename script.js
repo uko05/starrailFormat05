@@ -307,9 +307,17 @@ function handleImageClick(img, category) {
 function saveImage() {
     const saveArea = document.getElementById('savearea');
     
+    // 元のスタイルを保存
+    const originalHeight = saveArea.style.height;
+    const originalOverflow = saveArea.style.overflow;
+
+    // 一時的にスタイルを変更して全体をキャプチャ可能にする
+    saveArea.style.height = 'auto';
+    saveArea.style.overflow = 'visible';
+
     html2canvas(saveArea, { 
         useCORS: true, 
-        scale: 3 // スケールをさらに上げる
+        scale: 2 
     }).then(canvas => {
         canvas.toBlob(function(blob) {
             const link = document.createElement('a');
@@ -330,9 +338,12 @@ function saveImage() {
         }, 'image/png');
     }).catch(error => {
         console.error('Error capturing image:', error);
+    }).finally(() => {
+        // 元のスタイルに戻す
+        saveArea.style.height = originalHeight;
+        saveArea.style.overflow = originalOverflow;
     });
 }
-
 
 
 document.addEventListener('DOMContentLoaded', () => {
