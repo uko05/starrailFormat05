@@ -36,7 +36,6 @@ h1 {
 }
 
 #savearea {
-    height: 310px; /* 高さを固定 */
     overflow: auto; /* スクロールを表示 */
     width: 1250px;
     margin: 0 auto; /* 左右のマージンを自動で調整 */
@@ -84,10 +83,14 @@ h1 {
 }
 
 input, textarea {
-    font-size: 16px; /* 適切なフォントサイズに設定 */
+    font-size: 13px; /* 適切なフォントサイズに設定 */
     font-family: Arial, sans-serif; /* 読みやすいフォントを指定 */
     line-height: 1.5;
     padding: 4px;
+}
+
+input {
+    text-align: center;
 }
 
 /* 小サイズ */
