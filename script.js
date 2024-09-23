@@ -334,11 +334,8 @@ function saveImage() {
         console.error('Error capturing image:', error);
     }).finally(() => {
         // コピーしたdivを削除
-        saveArea.innerHTML = ''; // saveareaを初期化
-        textareas.forEach(textarea => {
-            const textContainer = saveArea.querySelector('div');
-            if (textContainer) textContainer.remove();
-        });
+        const textContainers = saveArea.querySelectorAll('div');
+        textContainers.forEach(container => container.remove()); // 追加したテキストコンテナだけを削除
     });
 }
 
