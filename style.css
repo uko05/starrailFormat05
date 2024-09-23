@@ -1,11 +1,9 @@
 body {
-    font-family: Arial, sans-serif;
     background-color: #f4f4f9;
     color: #333;
     margin: 0;
     padding: 0;
     text-align: center;
-    font-family: 'Comic Sans MS', 'Arial', sans-serif; /* かわいいフォントに変更 */
 }
 
 h1 {
@@ -38,7 +36,9 @@ h1 {
 }
 
 #savearea {
-    width: 1300px;
+    height: 500px; /* 高さを固定 */
+    overflow: auto; /* スクロールを表示 */
+    width: 1250px;
     margin: 0 auto; /* 左右のマージンを自動で調整 */
 }
 
@@ -173,21 +173,19 @@ header {
 .image-container {
     position: relative;
     display: inline-block;
-    margin: 1px;
+    margin: 2px;
+    transition: margin 0.2s; /* マージン変更時にアニメーションを追加（オプション） */
 }
 
 .selected-label {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    background: rgba(0, 0, 255, 0.7);
-    color: white;
-    padding: 2px 5px;
-    font-size: 14px;
-    border-radius: 3px;
-    font-weight: bold;
-    z-index: 10;
+    position: absolute; /* ラベルを絶対配置 */
+    top: 0; /* 上部に配置 */
+    left: 0; /* 左部に配置 */
+    color: white; /* ラベルの色 */
+    background-color: blue; /* ラベルの背景色 */
+    padding: 2px; /* パディング */
 }
+
 
 .image-item {
     display: block;

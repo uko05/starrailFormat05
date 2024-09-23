@@ -146,42 +146,85 @@ function loadImages() {
         });
     }
 
-function handleImageClick(img, category) {
-    const src = img.dataset.src;
-    const gridContainer = document.getElementById('grid');
+//function handleImageClick(img, category) {
+//    const src = img.dataset.src;
+//    const gridContainer = document.getElementById('grid');
+//
+//    // 選択解除時
+//    if (img.classList.contains('selected')) {
+//        img.classList.remove('selected');
+//        const existingEntry = gridContainer.querySelector(`img[data-src="${src}"]`);
+//        if (existingEntry) {
+//            existingEntry.parentElement.remove(); // 既存のセットを削除
+//        }
+//    } else {
+//        img.classList.add('selected');
+//
+//        // 新しいセットを作成
+//        const entry = document.createElement('div');
+//        entry.className = 'entry'; // CSSクラスを適用
+//        
+//        const imgElement = document.createElement('img');
+//        imgElement.src = `${imageFolder}${src}`;
+//        imgElement.alt = src;
+//        imgElement.dataset.src = src;
+//
+//        const nameInput = document.createElement('input');
+//        nameInput.type = 'text';
+//
+//        const descriptionInput = document.createElement('textarea');
+//        
+//        entry.appendChild(imgElement);
+//        entry.appendChild(nameInput);
+//        entry.appendChild(descriptionInput);
+//        
+//        gridContainer.appendChild(entry);
+//    }
+//}
 
-    // 選択解除時
-    if (img.classList.contains('selected')) {
-        img.classList.remove('selected');
-        const existingEntry = gridContainer.querySelector(`img[data-src="${src}"]`);
-        if (existingEntry) {
-            existingEntry.parentElement.remove(); // 既存のセットを削除
+    function handleImageClick(img, category) {
+        const src = img.dataset.src;
+        const gridContainer = document.getElementById('grid');
+        const isSelected = img.classList.contains('selected');
+        const tabCategory = document.querySelector('.tab-label.active').dataset.category;
+
+        // 現在のタブの選択状態を取得
+        let selectedCategory = tabSelections[tabCategory] || [];
+
+        // 選択解除時
+        if (img.classList.contains('selected')) {
+            img.classList.remove('selected');
+            removeNumberingAndBorder(img.parentElement);  // コンテナから番号と枠を削除
+            
+            const existingEntry = gridContainer.querySelector(`img[data-src="${src}"]`);
+            if (existingEntry) {
+                existingEntry.parentElement.remove(); // 既存のセットを削除
+            }
+        } else {
+            img.classList.add('selected');
+            addNumberingAndBorder(img.parentElement, selectedCategory.length + 1);  // コンテナに番号と枠を追加
+            
+            // 新しいセットを作成
+            const entry = document.createElement('div');
+            entry.className = 'entry'; // CSSクラスを適用
+            
+            const imgElement = document.createElement('img');
+            imgElement.src = `${imageFolder}${src}`;
+            imgElement.alt = src;
+            imgElement.dataset.src = src;
+
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+
+            const descriptionInput = document.createElement('textarea');
+            
+            entry.appendChild(imgElement);
+            entry.appendChild(nameInput);
+            entry.appendChild(descriptionInput);
+            
+            gridContainer.appendChild(entry);
         }
-    } else {
-        img.classList.add('selected');
-
-        // 新しいセットを作成
-        const entry = document.createElement('div');
-        entry.className = 'entry'; // CSSクラスを適用
-        
-        const imgElement = document.createElement('img');
-        imgElement.src = `${imageFolder}${src}`;
-        imgElement.alt = src;
-        imgElement.dataset.src = src;
-
-        const nameInput = document.createElement('input');
-        nameInput.type = 'text';
-
-        const descriptionInput = document.createElement('textarea');
-        
-        entry.appendChild(imgElement);
-        entry.appendChild(nameInput);
-        entry.appendChild(descriptionInput);
-        
-        gridContainer.appendChild(entry);
     }
-}
-
 
     function updateTabState(tabCategory) {
         // 既存の選択リストを取得
@@ -202,10 +245,10 @@ function handleImageClick(img, category) {
             }
         });
     }
-
+    
     function addNumberingAndBorder(container, number) {
         // 青い枠と番号を追加（コンテナに）
-        container.style.border = '2px solid blue';
+        container.style.outline = '2px solid blue'; // 枠の代わりにアウトラインを追加
         let label = container.querySelector('.selected-label');
         if (!label) {
             label = document.createElement('div');
@@ -214,10 +257,10 @@ function handleImageClick(img, category) {
         }
         label.textContent = SELECTED_LABEL; // 定数で管理
     }
-
+    
     function removeNumberingAndBorder(container) {
         // 青い枠と番号を削除
-        container.style.border = 'none';
+        container.style.outline = 'none'; // アウトラインをリセット
         const label = container.querySelector('.selected-label');
         if (label) label.remove();
     }
