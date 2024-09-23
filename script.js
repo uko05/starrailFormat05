@@ -348,6 +348,7 @@ function saveImage() {
 function saveImage() {
     const saveArea = document.getElementById('savearea');
     const textareas = document.querySelectorAll('textarea');
+    const originalContent = saveArea.innerHTML; // 元の内容を保存
 
     // テキストエリアの内容を新しいdivにコピー
     textareas.forEach(textarea => {
@@ -366,13 +367,11 @@ function saveImage() {
     }).catch(error => {
         console.error('Error capturing image:', error);
     }).finally(() => {
-        // コピーしたdivを削除
-        textareas.forEach(textarea => {
-            const textContainer = saveArea.querySelector('div');
-            if (textContainer) textContainer.remove();
-        });
+        // 元の内容に戻す
+        saveArea.innerHTML = originalContent; // 元の内容に戻す
     });
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadImages();
