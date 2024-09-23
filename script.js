@@ -307,17 +307,9 @@ function handleImageClick(img, category) {
 function saveImage() {
     const saveArea = document.getElementById('savearea');
     
-    // テキストエリアと入力欄のスタイルを調整
-    const textAreas = saveArea.querySelectorAll('textarea, input[type="text"]');
-    textAreas.forEach(area => {
-        area.style.lineHeight = '1.5';  // 行の高さを調整
-        area.style.padding = '4px';     // 余白を調整
-        area.style.whiteSpace = 'pre-wrap'; // 改行を保持
-    });
-
     html2canvas(saveArea, { 
         useCORS: true, 
-        scale: 2 
+        scale: 3 // スケールをさらに上げる
     }).then(canvas => {
         canvas.toBlob(function(blob) {
             const link = document.createElement('a');
@@ -338,15 +330,9 @@ function saveImage() {
         }, 'image/png');
     }).catch(error => {
         console.error('Error capturing image:', error);
-    }).finally(() => {
-        // 元のスタイルに戻す
-        textAreas.forEach(area => {
-            area.style.lineHeight = '';  
-            area.style.padding = '';    
-            area.style.whiteSpace = ''; 
-        });
     });
 }
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
