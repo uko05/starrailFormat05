@@ -345,7 +345,34 @@ function saveImage() {
     });
 }
 
+function saveImage() {
+    const saveArea = document.getElementById('savearea');
+    const textareas = document.querySelectorAll('textarea');
 
+    // テキストエリアの内容を新しいdivにコピー
+    textareas.forEach(textarea => {
+        const textContainer = document.createElement('div');
+        textContainer.style.whiteSpace = 'pre-wrap'; // 改行を反映
+        textContainer.textContent = textarea.value; // テキストエリアの内容をコピー
+        saveArea.appendChild(textContainer);
+    });
+
+    // html2canvasでキャプチャ
+    html2canvas(saveArea, {
+        useCORS: true,
+        scale: 2
+    }).then(canvas => {
+        // 画像保存処理...
+    }).catch(error => {
+        console.error('Error capturing image:', error);
+    }).finally(() => {
+        // コピーしたdivを削除
+        textareas.forEach(textarea => {
+            const textContainer = saveArea.querySelector('div');
+            if (textContainer) textContainer.remove();
+        });
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     loadImages();
