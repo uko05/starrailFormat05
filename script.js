@@ -359,6 +359,11 @@ function handleImageClick(img, category) {
 }
 
 function saveImage() {
+
+    // imageareaを一時的に表示
+    const imageArea = document.getElementById('imagearea');
+    imageArea.style.display = 'block'; // 表示
+
     html2canvas(document.getElementById('imagearea'), { 
         useCORS: true, 
         scale: 2 // スケールを調整して解像度を上げる
@@ -384,6 +389,8 @@ function saveImage() {
     }).catch(error => {
         console.error('Error capturing image:', error);
     });
+    // キャプチャが完了したらimageareaを非表示に戻す
+    imageArea.style.display = 'none'; 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
