@@ -362,7 +362,7 @@ function saveImage() {
 
     // imageareaを一時的に表示
     const imageArea = document.getElementById('imagearea');
-    imageArea.style.display = 'block'; // 表示
+    imageArea.style.display = 'grid'; // 表示
 
     html2canvas(document.getElementById('imagearea'), { 
         useCORS: true, 
@@ -390,7 +390,7 @@ function saveImage() {
         console.error('Error capturing image:', error);
     });
     // キャプチャが完了したらimageareaを非表示に戻す
-    imageArea.style.display = 'grid'; 
+    imageArea.style.display = 'none'; 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
