@@ -166,9 +166,8 @@ function loadImages() {
 function handleImageClick(img, category) {
     const src = img.dataset.src;
     const gridContainer = document.getElementById('grid');
-    const saveArea = document.getElementById('imagearea'); // 保存エリアを取得
     const tabCategory = document.querySelector('.tab-label.active').dataset.category;
-
+    
     // 選択状態を取得
     let selectedCategory = tabSelections[tabCategory] || [];
 
@@ -183,12 +182,6 @@ function handleImageClick(img, category) {
         const existingEntry = gridContainer.querySelector(`img[data-src="${src}"]`);
         if (existingEntry) {
             existingEntry.parentElement.remove(); // 既存のセットを削除
-        }
-
-        // 保存エリアからも削除
-        const existingSaveEntry = saveArea.querySelector(`img[data-src="${src}"]`);
-        if (existingSaveEntry) {
-            existingSaveEntry.parentElement.remove(); // 保存エリアの既存のセットを削除
         }
 
         // 選択リストから画像を削除
@@ -211,66 +204,20 @@ function handleImageClick(img, category) {
         const nameInput = document.createElement('input');
         nameInput.type = 'text';
 
-        nameInput.addEventListener('blur', () => {
-            // フォーカスが外れたときに保存エリアに転記
-            const saveNameLabel = saveArea.querySelector(`.lbl_name[data-src="${src}"]`);
-            if (saveNameLabel) {
-                saveNameLabel.textContent = nameInput.value; // 入力内容を転記
-                saveNameLabel.style.height = '25px'; // 高さをリセット
-            }
-        });
-
         const descriptionInput = document.createElement('textarea');
-
-        descriptionInput.addEventListener('blur', () => {
-            // フォーカスが外れたときに保存エリアに転記
-            const saveDescriptionLabel = saveArea.querySelector(`.lbl_area[data-src="${src}"]`);
-            if (saveDescriptionLabel) {
-                saveDescriptionLabel.textContent = descriptionInput.value; // 入力内容を転記
-            }
-        });
 
         entry.appendChild(imgElement);
         entry.appendChild(nameInput);
         entry.appendChild(descriptionInput);
 
         gridContainer.appendChild(entry);
-
-        // 保存エリアにも同じものを作成
-        const saveEntry = document.createElement('div');
-        saveEntry.className = 'entry'; // CSSクラスを適用
-
-        const saveImgElement = document.createElement('img');
-        saveImgElement.src = `${imageFolder}${src}`;
-        saveImgElement.alt = src;
-        saveImgElement.dataset.src = src;
-
-        // 名前と説明のラベルを作成
-        const saveNameLabel = document.createElement('label');
-        saveNameLabel.textContent = ' '; // 初期値を設定（ここでは空）
-        saveNameLabel.className = 'lbl_name'; // CSSクラスを適用
-        saveNameLabel.dataset.src = src; // 画像のsrcをデータ属性として追加
-
-        const saveDescriptionLabel = document.createElement('label');
-        saveDescriptionLabel.textContent = ' '; // 初期値を設定（ここでは空）
-        saveDescriptionLabel.className = 'lbl_area'; // CSSクラスを適用
-        saveDescriptionLabel.dataset.src = src; // 画像のsrcをデータ属性として追加
-
-        saveEntry.appendChild(saveImgElement);
-        saveEntry.appendChild(saveNameLabel);
-        saveEntry.appendChild(saveDescriptionLabel);
-
-        saveArea.appendChild(saveEntry);
-        
-        // 最初のラベル更新を行う
-        saveNameLabel.textContent = nameInput.value; // 入力内容を転記
-        saveDescriptionLabel.textContent = descriptionInput.value; // 入力内容を転記
     }
 
     // 更新された選択リストをtabSelectionsに保存
     tabSelections[tabCategory] = selectedCategory;
 
     // 表示を更新
+    //updateTabSelectionsDisplay();
     updateImageNumbers(tabCategory);  // 番号の更新も行う
 }
 
@@ -359,32 +306,43 @@ function handleImageClick(img, category) {
 }
 
 function saveImage() {
-    html2canvas(document.getElementById('savearea'), { 
-        useCORS: true, 
-        scale: 2 // スケールを調整して解像度を上げる
+    const saveArea = document.getElementById('savearea');
+    const textareas = document.querySelectorAll('textarea');
+
+    // 表示用のdivを作成
+    const tempContainer = document.createElement('div');
+
+    textareas.forEach(textarea => {
+        const textContainer = document.createElement('div');
+        textContainer.style.whiteSpace = 'pre-wrap'; // 改行を反映
+        textContainer.textContent = textarea.value; // テキストエリアの内容をコピー
+        tempContainer.appendChild(textContainer);
+    });
+
+    // 一時的な要素としてsaveAreaに追加
+    saveArea.appendChild(tempContainer);
+
+    // html2canvasでキャプチャ
+    html2canvas(saveArea, {
+        useCORS: true,
+        scale: 2
     }).then(canvas => {
         canvas.toBlob(function(blob) {
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            
-            // 現在の日時を「yyyyMMdd_HHmmss」形式にフォーマット
             const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0'); // 月は0から始まるので+1
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            const formattedDate = `${year}${month}${day}_${hours}${minutes}${seconds}`;
-            link.download = `原神フリーフォーマット_${formattedDate}.png`; // ファイル名の変更
-            
+            const formattedDate = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            link.download = `ミリしら原神_${formattedDate}.png`; 
             link.click();
         }, 'image/png');
     }).catch(error => {
         console.error('Error capturing image:', error);
+    }).finally(() => {
+        // 一時的な要素を削除
+        tempContainer.remove();
     });
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadImages();
@@ -397,24 +355,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 全ての名前入力欄、説明入力欄、エントリーを取得
             const descriptionTextareas = document.querySelectorAll('textarea');
-            const descriptionLabelareas = document.querySelectorAll('.lbl_area'); // ピリオドを追加
             const entries = document.querySelectorAll('.entry');
 
             // 全ての入力欄とエントリーのクラスをリセットして、サイズに応じたクラスを追加
             descriptionTextareas.forEach(descriptionTextarea => {
                 descriptionTextarea.className = ''; // クラスリセット
-                descriptionTextarea.classList.add(size); // サイズクラスを追加
-            });
-
-            descriptionLabelareas.forEach(descriptionLabel => {
-                descriptionLabel.className = 'lbl_area'; // 基本クラスを設定
-                descriptionLabel.classList.add(size); // サイズクラスを追加
+                if (size === 'small') {
+                    descriptionTextarea.classList.add('small');
+                } else if (size === 'medium') {
+                    descriptionTextarea.classList.add('medium');
+                } else if (size === 'large') {
+                    descriptionTextarea.classList.add('large');
+                }
             });
 
             // エントリーのサイズも変更
             entries.forEach(entry => {
-                entry.className = 'entry'; // 基本クラスをリセット
-                entry.classList.add(size); // サイズクラスを追加
+                entry.className = 'entry'; // クラスリセット
+                if (size === 'small') {
+                    entry.classList.add('small');
+                } else if (size === 'medium') {
+                    entry.classList.add('medium');
+                } else if (size === 'large') {
+                    entry.classList.add('large');
+                }
             });
 
             console.log(`Size changed to: ${size}`);
