@@ -359,7 +359,7 @@ function handleImageClick(img, category) {
 }
 
 function saveImage() {
-    html2canvas(document.getElementById('savearea'), { 
+    html2canvas(document.getElementById('imagearea'), { 
         useCORS: true, 
         scale: 2 // スケールを調整して解像度を上げる
     }).then(canvas => {
