@@ -309,13 +309,18 @@ function saveImage() {
     const saveArea = document.getElementById('savearea');
     const textareas = document.querySelectorAll('textarea');
 
-    // テキストエリアの内容を新しいdivにコピー
+    // 表示用のdivを作成
+    const tempContainer = document.createElement('div');
+
     textareas.forEach(textarea => {
         const textContainer = document.createElement('div');
         textContainer.style.whiteSpace = 'pre-wrap'; // 改行を反映
         textContainer.textContent = textarea.value; // テキストエリアの内容をコピー
-        saveArea.appendChild(textContainer);
+        tempContainer.appendChild(textContainer);
     });
+
+    // 一時的な要素としてsaveAreaに追加
+    saveArea.appendChild(tempContainer);
 
     // html2canvasでキャプチャ
     html2canvas(saveArea, {
@@ -333,9 +338,8 @@ function saveImage() {
     }).catch(error => {
         console.error('Error capturing image:', error);
     }).finally(() => {
-        // コピーしたdivを削除
-        const textContainers = saveArea.querySelectorAll('div');
-        textContainers.forEach(container => container.remove()); // 追加したテキストコンテナだけを削除
+        // 一時的な要素を削除
+        tempContainer.remove();
     });
 }
 
