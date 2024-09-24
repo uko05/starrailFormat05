@@ -390,7 +390,7 @@ function saveImage() {
         console.error('Error capturing image:', error);
     });
     // キャプチャが完了したらimageareaを非表示に戻す
-    imageArea.style.display = 'none'; 
+    imageArea.style.display = 'grid'; 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
