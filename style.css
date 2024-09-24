@@ -41,6 +41,10 @@ h1 {
     margin: 0 auto; /* 左右のマージンを自動で調整 */
 }
 
+#imagearea {
+    padding: 20px 0px 40px 0px;
+    position: relative; /* 親要素を相対位置に設定 */
+}
 .container {
     display: grid;
     grid-template-columns: repeat(6, 200px); /* 横に6枚表示 */
@@ -351,6 +355,9 @@ header {
     font-size: 12px;
     display: flex;
     justify-content: flex-end; /* 右寄せ */
+    position: absolute; /* 絶対位置に設定 */
+    bottom: 10px; /* 下から10pxの位置 */
+    right: 10px; /* 右から10pxの位置 */
 }
 
 /* スマホの縦画面表示に対応 */
