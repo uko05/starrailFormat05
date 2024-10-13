@@ -11,6 +11,7 @@ const imageData = [
     { src: 'natasya.png', category: 'butsuri' },
     { src: 'syu1.png', category: 'butsuri' },
     { src: 'sei1.png', category: 'butsuri' },
+    { src: 'newteiun.png', category: 'hi' },
     { src: 'reisa.png', category: 'hi' },
     { src: 'syokyu.png', category: 'hi' },
     { src: 'hotaru.png', category: 'hi' },
@@ -227,7 +228,7 @@ function handleImageClick(img, category) {
             // フォーカスが外れたときに保存エリアに転記
             const saveDescriptionLabel = saveArea.querySelector(`.lbl_area[data-src="${src}"]`);
             if (saveDescriptionLabel) {
-                saveDescriptionLabel.textContent = descriptionInput.value; // 入力内容を転記
+		        saveDescriptionLabel.innerHTML = descriptionInput.value.replace(/\n/g, '<br>');
             }
         });
 
