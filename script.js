@@ -27,6 +27,7 @@ const imageData = [
     { src: 'himeko.png', category: 'hi' },    
     { src: 'syu4.png', category: 'koori' },
     { src: 'sei4.png', category: 'koori' },
+    { src: 'nagayatuki.png', category: 'koori' },
     { src: 'heltamama.png', category: 'koori' },
     { src: 'ruanmama.png', category: 'koori' },
     { src: 'misia.png', category: 'koori' },
