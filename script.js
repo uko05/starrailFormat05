@@ -25,7 +25,8 @@ const imageData = [
     { src: 'ketya.png', category: 'hi' },
     { src: 'hukku.png', category: 'hi' },
     { src: 'aster.png', category: 'hi' },
-    { src: 'himeko.png', category: 'hi' },    
+    { src: 'himeko.png', category: 'hi' }, 
+    { src: 'kyurene.png', category: 'koori' },   
     { src: 'syu4.png', category: 'koori' },
     { src: 'sei4.png', category: 'koori' },
     { src: 'nagayatuki.png', category: 'koori' },
@@ -415,6 +416,19 @@ function saveImage() {
 document.addEventListener('DOMContentLoaded', () => {
     loadImages();
 
+    const sidebar = document.getElementById('sidebar');
+    const sizeOption = document.querySelectorAll('input[name="size-option"]');
+
+    sizeOption.forEach(option => {
+        option.addEventListener('change', (event) => {
+            if (event.target.value === 'default') {
+                sidebar.style.display = 'block';   // ← 左バー表示
+            } else if (event.target.value === 'hakai') {
+                sidebar.style.display = 'none';    // ← 左バー非表示
+            }
+        });
+    });
+    
     const sizeOptions = document.querySelectorAll('input[name="size-option"]');
     
     sizeOptions.forEach(option => {
