@@ -15,6 +15,7 @@ const imageData = [
     { src: 'susyo.png', category: 'butsuri' },
     { src: 'kurara.png', category: 'butsuri' },
     { src: 'natasya.png', category: 'butsuri' },
+    
     { src: 'hibana.png', category: 'hi' },
     { src: 'daria.png', category: 'hi' },
     { src: 'newteiun.png', category: 'hi' },
@@ -29,6 +30,7 @@ const imageData = [
     { src: 'hukku.png', category: 'hi' },
     { src: 'aster.png', category: 'hi' },
     { src: 'himeko.png', category: 'hi' }, 
+    
     { src: 'kyurene.png', category: 'koori' },   
     { src: 'syu4.png', category: 'koori' },
     { src: 'sei4.png', category: 'koori' },
@@ -42,6 +44,7 @@ const imageData = [
     { src: 'jepado.png', category: 'koori' },
     { src: 'helta.png', category: 'koori' },
     { src: 'nanoka.png', category: 'koori' },    
+    
     { src: 'keryu.png', category: 'kaze' },
     { src: 'seiba.png', category: 'kaze' },
     { src: 'hiansi.png', category: 'kaze' },
@@ -52,7 +55,9 @@ const imageData = [
     { src: 'jin.png', category: 'kaze' },
     { src: 'sanpo.png', category: 'kaze' },
     { src: 'buronya.png', category: 'kaze' },
-    { src: 'tankou.png', category: 'kaze' },    
+    { src: 'tankou.png', category: 'kaze' },   
+    
+    { src: 'sinazu.png', category: 'kaminari' }, 
     { src: 'aguraia.png', category: 'kaminari' },
     { src: 'yomi.png', category: 'kaminari' },
     { src: 'kahuka.png', category: 'kaminari' },
@@ -62,6 +67,7 @@ const imageData = [
     { src: 'teiun.png', category: 'kaminari' },
     { src: 'sebaru.png', category: 'kaminari' },
     { src: 'aran.png', category: 'kaminari' },
+    
     { src: 'modis.png', category: 'kyosuu' },
     { src: 'sunday.png', category: 'kyosuu' },
     { src: 'ranpa.png', category: 'kyosuu' },
@@ -74,6 +80,7 @@ const imageData = [
     { src: 'ingetsu.png', category: 'kyosuu' },
     { src: 'gyoku.png', category: 'kyosuu' },
     { src: 'rasetu.png', category: 'kyosuu' },
+    
     { src: 'atya.png', category: 'ryoushi' },
     { src: 'saferu.png', category: 'ryoushi' },
     { src: 'kyasuto.png', category: 'ryoushi' },
