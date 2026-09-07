@@ -1,3 +1,11 @@
+// firebaseConfig.js を先に評価してデフォルトAppを確立してから saved-image.js を
+// importすること(順序が逆だとログイン状態が正しく共有されない。24_AccountCenter/
+// saved-image.js のコメント参照)。
+import './firebaseConfig.js';
+import {
+  onAccountAuthState, saveProfileImage, getSavedProfileImage, formatSavedAt,
+} from 'https://uko05.github.io/24_AccountCenter/saved-image.js';
+
 import { starrailChars } from 'https://cdn.jsdelivr.net/gh/uko05/99_SharedImage@main/02_Starrail/chara_data/starrail_chars.js';
 
 const imageFolder = 'https://cdn.jsdelivr.net/gh/uko05/99_SharedImage@main/02_Starrail/chara_full/';
@@ -6,6 +14,85 @@ const imageData = starrailChars
     .map(c => ({ src: c.icon, category: c.element }));
 
 const SELECTED_LABEL = '☑';
+const SITE_ID = 'starrailFreeFormat';
+let refreshSavedImageUI = () => {};
+
+function savedImageLang() {
+  return document.querySelector('input[name="lang"]:checked')?.value || localStorage.getItem('lang') || 'ja';
+}
+
+const SAVED_IMAGE_NOT_LOGGED_IN_HTML = {
+  ja: 'アカウント登録すると、ここで前回保存した画像を確認できます。<a href="https://uko05.github.io/24_AccountCenter/" target="_blank" rel="noopener">登録はこちら（任意）</a>',
+  en: 'Register an account to see your last saved image here. <a href="https://uko05.github.io/24_AccountCenter/" target="_blank" rel="noopener">Register here (optional)</a>',
+};
+const SAVED_IMAGE_NO_HISTORY_HTML = {
+  ja: '画像を保存すると、ここに表示されます。',
+  en: 'Once you save an image, it will appear here.',
+};
+
+// 「前回保存した画像を確認」トグルの初期化。
+// 未登録者にも常に表示し(登録を後押しするため)、状態に応じてメッセージ/画像を切り替える。
+function initSavedImageUI() {
+  const toggle = document.getElementById('uko-saved-image-toggle');
+  const panel = document.getElementById('uko-saved-image-panel');
+  const messageEl = document.getElementById('uko-saved-image-message');
+  const dateEl = document.getElementById('uko-saved-image-date');
+  const imgEl = document.getElementById('uko-saved-image-img');
+  const modal = document.getElementById('uko-saved-image-modal');
+  const modalImg = document.getElementById('uko-saved-image-modal-img');
+  const modalClose = document.getElementById('uko-saved-image-modal-close');
+  const arrowEl = document.getElementById('uko-saved-image-arrow');
+  if (!toggle || !panel || !messageEl || !dateEl || !imgEl) return;
+
+  toggle.addEventListener('click', () => {
+    const willOpen = panel.style.display === 'none';
+    panel.style.display = willOpen ? 'block' : 'none';
+    if (arrowEl) arrowEl.textContent = willOpen ? '▲' : '▼';
+  });
+
+  // サムネイルは元画像の30%サイズで表示する
+  imgEl.addEventListener('load', () => {
+    imgEl.style.width = `${imgEl.naturalWidth * 0.3}px`;
+  });
+  // クリックで原寸(100%)ポップアップ表示
+  imgEl.addEventListener('click', () => {
+    if (!modal || !modalImg) return;
+    modalImg.src = imgEl.src;
+    modal.style.display = 'flex';
+  });
+  modalClose?.addEventListener('click', () => { modal.style.display = 'none'; });
+  modal?.querySelector('.uko-saved-image-modal-backdrop')?.addEventListener('click', () => { modal.style.display = 'none'; });
+
+  let loggedIn = false;
+
+  function showMessage(html) {
+    messageEl.innerHTML = html;
+    messageEl.style.display = 'block';
+    dateEl.style.display = 'none';
+    imgEl.style.display = 'none';
+  }
+
+  async function refresh() {
+    if (!loggedIn) {
+      showMessage(SAVED_IMAGE_NOT_LOGGED_IN_HTML[savedImageLang()]);
+      return;
+    }
+    const entry = await getSavedProfileImage(SITE_ID);
+    if (entry) {
+      messageEl.style.display = 'none';
+      dateEl.style.display = 'block';
+      imgEl.style.display = 'block';
+      dateEl.textContent = formatSavedAt(entry.updatedAt);
+      imgEl.src = entry.url;
+    } else {
+      showMessage(SAVED_IMAGE_NO_HISTORY_HTML[savedImageLang()]);
+    }
+  }
+  refreshSavedImageUI = refresh;
+  onAccountAuthState((user) => { loggedIn = !!user; refresh(); });
+  document.querySelectorAll('input[name="lang"]').forEach((el) => el.addEventListener('change', refresh));
+}
+document.addEventListener('DOMContentLoaded', initSavedImageUI);
 
 //------------------------------------------------------------------------------------------------
 
@@ -285,6 +372,9 @@ function saveImage() {
         scale: 2 // スケールを調整して解像度を上げる
     }).then(canvas => {
         canvas.toBlob(function(blob) {
+            // アカウント登録者ならクラウドにも保存(失敗しても無視、ローカル保存は継続)
+            saveProfileImage(SITE_ID, blob).then(() => refreshSavedImageUI());
+
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             
