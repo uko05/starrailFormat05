@@ -418,7 +418,7 @@ header {
     padding: 0;
     font-family: inherit;
     font-size: 13px;
-    color: #4a90e2;
+    color: #d32f2f;
     text-decoration: underline;
     cursor: pointer;
 }
@@ -439,7 +439,7 @@ header {
     color: #555;
 }
 .uko-saved-image-message a {
-    color: #4a90e2;
+    color: #d32f2f;
     text-decoration: underline;
 }
 .uko-saved-image-img {
