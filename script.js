@@ -444,9 +444,13 @@ function saveImage() {
     const imageArea = document.getElementById('imagearea');
     imageArea.style.display = 'grid'; // 表示
 
-    html2canvas(document.getElementById('imagearea'), { 
-        useCORS: true, 
-        scale: 2 // スケールを調整して解像度を上げる
+    // スマホの縦画面だとimageareaの実際の横幅(PC想定の固定幅)よりビューポートが狭いため、
+    // windowWidthを指定しないとhtml2canvasが右側を切り落として撮ってしまう。
+    html2canvas(document.getElementById('imagearea'), {
+        useCORS: true,
+        scale: 2, // スケールを調整して解像度を上げる
+        windowWidth: imageArea.scrollWidth,
+        windowHeight: imageArea.scrollHeight
     }).then(canvas => {
         canvas.toBlob(function(blob) {
             // アカウント登録者ならクラウドにも保存(失敗しても無視、ローカル保存は継続)
