@@ -197,10 +197,32 @@
   .uko-about li{margin:2px 0;list-style:revert}
   .uko-about dt{font-weight:bold;margin-top:6px}
   .uko-about dd{margin:0 0 4px 1em}
+  .uko-about [hidden]{display:none!important}
   </style>
   <details class="uko-about">
-    <summary>このサイトについて</summary>
-    <div class="uko-about-body"><h2>#スタレフリーフォーマットとは</h2><p>崩壊：スターレイルのキャラクターを選んで、自由に文字を書き込んだ表を作れる無料ツールです。「ミリしら表」（プレイ前のイメージ）や「建国顔・傾国顔」など、SNSで流行っているフォーマットを好きなように作れます。</p><h2>使い方</h2><ol><li>属性タブからキャラを選んで、表に並べます。</li><li>キャラごとに好きな文字を書き込みます。</li><li>表のサイズ（小・中・大）を選んで「Save Image」で画像を保存し、シェアしましょう。</li></ol></div>
+    <summary><span data-uko-lang="ja">このサイトについて</span><span data-uko-lang="en" hidden>About this site</span></summary>
+    <div class="uko-about-body" data-uko-lang="ja"><h2>#スタレフリーフォーマットとは</h2><p>崩壊：スターレイルのキャラクターを選んで、自由に文字を書き込んだ表を作れる無料ツールです。「ミリしら表」（プレイ前のイメージ）や「建国顔・傾国顔」など、SNSで流行っているフォーマットを好きなように作れます。</p><h2>使い方</h2><ol><li>属性タブからキャラを選んで、表に並べます。</li><li>キャラごとに好きな文字を書き込みます。</li><li>表のサイズ（小・中・大）を選んで「Save Image」で画像を保存し、シェアしましょう。</li></ol></div>
+    <div class="uko-about-body" data-uko-lang="en" lang="en" hidden><h2>What is #Star Rail Free Format?</h2><p>A free tool for picking Honkai: Star Rail characters and making a chart with your own text. Make popular social media formats like "Know-nothing charts" (your image of characters before playing) or "Nation-building face / Nation-ruining face" however you like.</p><h2>How to use</h2><ol><li>Pick characters from the Type tabs and place them in the chart.</li><li>Write whatever you like for each character.</li><li>Choose a size (small, medium, large), press "Save Image", and share it.</li></ol></div>
   </details>
+  <script>
+  (function(){
+    // 説明文の日英切り替え。言語ラジオがあるサイトはその選択、ないサイトは共通のlocalStorage('lang')に合わせる
+    var box=document.currentScript.previousElementSibling;
+    function cur(){
+      var r=document.querySelector('input[name="lang"]:checked');
+      if(r) return r.value==='en'?'en':'ja';
+      try{return localStorage.getItem('lang')==='en'?'en':'ja';}catch(e){return 'ja';}
+    }
+    function apply(){
+      var l=cur();
+      box.querySelectorAll('[data-uko-lang]').forEach(function(n){n.hidden=n.getAttribute('data-uko-lang')!==l;});
+    }
+    apply();
+    document.addEventListener('change',function(e){if(e.target&&e.target.name==='lang')setTimeout(apply,0);});
+    document.addEventListener('DOMContentLoaded',apply);
+    window.addEventListener('load',apply);
+    new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  })();
+  </script>
 </body>
 </html>
